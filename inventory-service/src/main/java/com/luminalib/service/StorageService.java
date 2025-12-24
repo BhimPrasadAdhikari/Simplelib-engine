@@ -1,6 +1,8 @@
 package com.luminalib.service;
 
 import com.luminalib.model.Book;
+
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -15,10 +17,19 @@ public class StorageService {
     // Save the entire inventory to a file.
     // Checked Exception.
     public void saveToFile(List<Book> books) throws IOException {
-        List<String> lines = books.stream()
-                .map(b -> String.join(",", b.getId(), b.getTitle(), b.getAuthor(), b.getStatus().toString()))
-                .collect(Collectors.toList());
-        Files.write(Paths.get(FILE_PATH), lines, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+//        List<String> lines = books.stream()
+//                .map(b -> String.join(",", b.getId(), b.getTitle(), b.getAuthor(), b.getStatus().toString()))
+//                .collect(Collectors.toList());
+//        Files.write(Paths.get(FILE_PATH), lines, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+        try(BufferedWriter writer = Files.newBufferedWriter(Paths.get(FILE_PATH))) {
+            for (Book b: books) {
+                String line = String.format("%s,%s,%s,%s",
+                        b.getId(), b.getTitle(), b.getAuthor(), b.getStatus());
+                writer.write(line);
+                writer.newLine();
+            }
+
+        }
         System.out.println("Data saved to " + FILE_PATH);
     }
 
